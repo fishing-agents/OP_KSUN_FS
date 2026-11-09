@@ -175,6 +175,10 @@ on:
         required: false
         type: string
         default: ''
+      kernel_patches_ref:
+        description: 'WildKernels/kernel_patches commit (empty = main). Must match the KSUN version'
+        type: string
+        default: ''
       android12-5_10_susfs_branch_or_commit:
         description: 'Enter SusFS Branch or commit hash for android12-5.10'
         type: string
@@ -195,6 +199,9 @@ on:
         description: 'Enter SusFS Branch or commit hash for android16-6.12'
         type: string
         default: ''
+
+env:
+  KERNEL_PATCHES_REF: ${{ inputs.kernel_patches_ref }}
 
 jobs:
   set-op-model:

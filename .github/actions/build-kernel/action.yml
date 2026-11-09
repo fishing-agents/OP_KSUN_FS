@@ -900,7 +900,12 @@ runs:
           return 1
         }
         
-        retry_clone "https://github.com/WildKernels/kernel_patches.git" "main" "1"
+        retry_clone "https://github.com/WildKernels/kernel_patches.git" "main" "0"
+        # Fix patches track one KSUN version; pin to the set matching the pinned KSUN/SUSFS (KERNEL_PATCHES_REF).
+        if [ -n "${KERNEL_PATCHES_REF:-}" ]; then
+          git -C kernel_patches checkout -q "$KERNEL_PATCHES_REF"
+          echo "kernel_patches pinned to $KERNEL_PATCHES_REF"
+        fi
         
         if [ "${{ env.OP_SUSFS }}" = true ]; then
           echo "Using SUSFS branch/commit: $SUSFS_BRANCH"
