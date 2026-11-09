@@ -1416,8 +1416,24 @@ runs:
           fi
         fi
         
+        # OEM trees (e.g. OnePlus sm8550 5.15.197) add vendor-hook includes inside the
+        # include blocks SUSFS patches as context; park them and restore them after.
+        declare -A oem_hooks=()
+        for f in fs/proc/task_mmu.c fs/namespace.c; do
+          [ -f "$f" ] || continue
+          oem_hooks[$f]=$(grep -E '^#include <trace/hooks/' "$f" || true)
+          [ -n "${oem_hooks[$f]}" ] && sed -i '/^#include <trace\/hooks\//d' "$f" && echo "Parked OEM hook includes in $f"
+        done
+
         patch -p1 --forward < "$SUSFS_FOLDER/kernel_patches/50_add_susfs_in_${{ env.SUSFS_KERNEL_BRANCH }}.patch"
-        
+
+        for f in "${!oem_hooks[@]}"; do
+          [ -n "${oem_hooks[$f]}" ] || continue
+          printf '%s\n' "${oem_hooks[$f]}" > /tmp/oem_hooks.h
+          sed -i '/^#include "internal.h"$/r /tmp/oem_hooks.h' "$f"
+          grep -qF "$(head -1 /tmp/oem_hooks.h)" "$f" || { echo "::error::Failed to restore OEM hook includes in $f"; exit 1; }
+          echo "Restored OEM hook includes in $f"
+        done
         # SUSFS's OPEN_REDIRECT code unconditionally calls VMA_PAD_START(), which
         # only exists on GKI branches that carry Google's page-size-migration
         # feature (added to each android version's kernel/common branch at a
