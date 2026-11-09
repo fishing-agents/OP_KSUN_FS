@@ -76,7 +76,12 @@ runs:
             echo "Push failed, tag might have been created by a parallel job. Continuing..."
           fi
         else
-          echo "Release '$TAG_NAME' already exists. Ready for upload."
+          echo "Tag '$TAG_NAME' exists."
+        fi
+        # Forks inherit the tag but not its release; create it on the existing tag.
+        if ! gh release view "$TAG_NAME" --repo "$TARGET_REPO" >/dev/null 2>&1; then
+          echo "Release '$TAG_NAME' missing. Creating it on the existing tag..."
+          gh release create "$TAG_NAME" --verify-tag --prerelease --title "General Cache" --notes "Automated storage for build assets" --repo "$TARGET_REPO" || true
         fi
         echo "::endgroup::"
         

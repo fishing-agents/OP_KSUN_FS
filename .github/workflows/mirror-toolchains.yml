@@ -59,6 +59,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
+          if ! gh release view "$TAG_NAME" --repo "$TARGET_REPO" >/dev/null 2>&1; then
+            # Forks inherit the tag but not its release
+            git rev-parse "$TAG_NAME" >/dev/null 2>&1 && \
+              gh release create "$TAG_NAME" --verify-tag --title "SakFi Toolchains Mirror Cache" --notes "Dedicated Toolchains for SakFi Kernel Builds" --repo "$TARGET_REPO" --prerelease || true
+          fi
           if ! git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
             echo "Tag not found. Creating backdated tag and release..."
             
