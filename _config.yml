@@ -1,0 +1,12 @@
+title: OP_KSUN_FS
+description: KernelSU Next + SUSFS kernels for OnePlus devices on OxygenOS/ColorOS
+keywords: kernelsu next, susfs, oneplus, oxygenos, kernel, root
+theme: jekyll-theme-cayman
+plugins:
+  - jekyll-seo-tag
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: false
+include: [README.md]
+exclude: [src, tests, scripts, configs, manifests, layout, logs, windows, uv.lock, pyproject.toml]
