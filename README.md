@@ -2,7 +2,9 @@
 
 KernelSU Next + SUSFS kernels for OnePlus devices on stock OxygenOS / ColorOS 14, 15 and 16, built on GitHub Actions from [OnePlus kernel sources](https://github.com/OnePlusOSS).
 
-Fork of [sakfi/OP_KSUN_FS](https://github.com/sakfi/OP_KSUN_FS). For LineageOS, use [LineageOS_KSUN_SUSFS](https://github.com/fishing-agents/LineageOS_KSUN_SUSFS) instead.
+This is a fork of [OP_KSUN_FS by SakFi](https://github.com/sakfi/OP_KSUN_FS), and most of it is his work: the build workflows, device configs, kernel patch set, LKM packaging with on-device `ksud boot-patch`, the SUSFS guard module and the [AnyKernel3.1 installer](https://github.com/sakfi/AnyKernel3.1). This fork adds pinned builds for the OnePlus 11 and small fixes. If you want builds for other devices, or the original project, go to [SakFi's repo](https://github.com/sakfi/OP_KSUN_FS) ([Telegram](https://t.me/SakFi)). The `SKF_` zip prefix and the `SakFi-OP` kernel name are his and are kept.
+
+For LineageOS, use [LineageOS_KSUN_SUSFS](https://github.com/fishing-agents/LineageOS_KSUN_SUSFS) instead.
 
 ## Releases
 
@@ -19,7 +21,7 @@ Other devices have configs under [`configs/`](configs/) (`a14`, `a15`, `a16`) an
 - **KernelSU Next**, as a loadable module (LKM, default) or built in (`ksu_mode: builtin`). In LKM mode the installer patches `init_boot` (or `boot`) with `ksud boot-patch` during flashing.
 - **SUSFS** with `SUS_PATH`, `SUS_MOUNT`, `SUS_KSTAT`, `SUS_MAP`, `SPOOF_UNAME`, `SPOOF_CMDLINE`, `OPEN_REDIRECT`, `AVC_SPOOF`.
 - Extras: NTSync, BBRv3, WireGuard, TTL / IP set, Baseband Guard, MGLRU and scheduler tuning, Droidspaces container support.
-- Packaged with AnyKernel3.
+- Packaged with SakFi's AnyKernel3.1 (based on osm0sis's AnyKernel3).
 
 ## Install
 
@@ -43,7 +45,7 @@ Flashing a kernel that doesn't match the installed firmware can bootloop the pho
 
 ## Credits
 
-- [sakfi/OP_KSUN_FS](https://github.com/sakfi/OP_KSUN_FS): the build suite this fork is based on
+- [SakFi](https://github.com/sakfi): author of [OP_KSUN_FS](https://github.com/sakfi/OP_KSUN_FS), which this fork is based on (build suite, configs, LKM packaging, SUSFS guard, [AnyKernel3.1](https://github.com/sakfi/AnyKernel3.1))
 - [fatalcoder524](https://github.com/fatalcoder524) and [WildKernels](https://github.com/WildKernels/OnePlus_KernelSU_SUSFS): original OnePlus pipeline
 - [KernelSU Next](https://github.com/KernelSU-Next/KernelSU-Next) (rifsxd)
 - [SUSFS](https://gitlab.com/simonpunk/susfs4ksu) (simonpunk), [SUSFS module](https://github.com/sidex15/ksu_module_susfs) (sidex15)
