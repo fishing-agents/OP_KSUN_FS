@@ -1,235 +1,51 @@
-<div align="center">
+# OP_KSUN_FS
 
-# 🔥 OP_KSUN_FS 🔥
-### *High-Performance Hybrid LKM & SUSFS Kernels for OnePlus Devices*
+KernelSU Next + SUSFS kernels for OnePlus devices on stock OxygenOS / ColorOS 14, 15 and 16, built on GitHub Actions from [OnePlus kernel sources](https://github.com/OnePlusOSS).
 
-[![Build Kernel](https://img.shields.io/github/actions/workflow/status/sakfi/OP_KSUN_FS/build-kernel-release.yml?label=Release%20Builds&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/sakfi/OP_KSUN_FS/actions/workflows/build-kernel-release.yml)
-[![GitHub Release](https://flat.badgen.net/github/tag/sakfi/OP_KSUN_FS?label=Latest%20Release&color=00FF99&icon=github)](https://github.com/sakfi/OP_KSUN_FS/releases/latest)
-[![AnyKernel3.1](https://img.shields.io/badge/AnyKernel3.1-Custom-blue?style=flat-square&logo=git)](https://github.com/sakfi/AnyKernel3.1)
-[![Forks](https://badgen.net/github/forks/sakfi/OP_KSUN_FS?color=orange&style=flat-square)](https://github.com/sakfi/OP_KSUN_FS/network/members)
-[![Stars](https://badgen.net/github/stars/sakfi/OP_KSUN_FS?color=yellow&style=flat-square)](https://github.com/sakfi/OP_KSUN_FS/stargazers)
+Fork of [sakfi/OP_KSUN_FS](https://github.com/sakfi/OP_KSUN_FS). For LineageOS, use [LineageOS_KSUN_SUSFS](https://github.com/fishing-agents/LineageOS_KSUN_SUSFS) instead.
 
-<a href="https://github.com/sakfi/OP_KSUN_FS">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=20&duration=3000&pause=1000&color=00FF99&center=true&vCenter=true&width=620&lines=OnePlus+Kernels+by+SakFi;Hybrid+LKM+%2B+SUSFS+v2.2.0%2B;Automated+On-Device+Ramdisk+Patching;Battery+Optimization+%2B+Gaming+NTSync;OxygenOS+14+%2F+15+%2F+16+Ready" alt="Typing SVG" />
-</a>
+## Releases
 
-<br>
+[Latest release](https://github.com/fishing-agents/OP_KSUN_FS/releases/latest). Current build:
 
-[![KernelSU-Next](https://img.shields.io/badge/KernelSU--Next-Hybrid%20LKM/GKI%20%7C%20Built--in-00c853?style=for-the-badge&logo=android)](https://kernelsu-next.github.io/webpage/)
-[![SUSFS](https://img.shields.io/badge/SUSFS-v2.3.0%2B%20Patched-ff6d00?style=for-the-badge&logo=gitlab)](https://gitlab.com/simonpunk/susfs4ksu)
-[![Brand](https://img.shields.io/badge/Branding-SakFi--OP-00b0ff?style=for-the-badge&logo=oneplus)](https://github.com/sakfi/OP_KSUN_FS)
+- **OnePlus 11 (salami)**, OxygenOS 16, `android13-5.15.197`, KernelSU Next v3.4.2, SUSFS v2.3.0: `SKF_OP11_A16_android13-5.15.197_KSUN_33355_SuSFS_v2.3.0.zip`
 
-</div>
+Zip names follow `SKF_{MODEL}_{OS}_{KERNEL}_{KSU}_{KSU_VERSION}_SuSFS_{SUSFS_VERSION}.zip`. A `.sha256` file is published next to each zip.
 
-<div align="center">
-  <img src=".github/workflows/split.gif" alt="Divider" width="100%" height="4px" />
-</div>
+Other devices have configs under [`configs/`](configs/) (`a14`, `a15`, `a16`) and can be built from the workflow, but only the releases above are published here. See [compatibility.md](compatibility.md).
 
-## 📖 Overview
+## What's in the kernel
 
-**OP_KSUN_FS** is a modern, enterprise-grade automated CI/CD pipeline engineered to compile, optimize, and package customized Android kernels for **OnePlus devices** running **OxygenOS 14, 15, and 16** (Kernels `5.10`, `5.15`, `6.1`, `6.6`, and `6.12`).
+- **KernelSU Next**, as a loadable module (LKM, default) or built in (`ksu_mode: builtin`). In LKM mode the installer patches `init_boot` (or `boot`) with `ksud boot-patch` during flashing.
+- **SUSFS** with `SUS_PATH`, `SUS_MOUNT`, `SUS_KSTAT`, `SUS_MAP`, `SPOOF_UNAME`, `SPOOF_CMDLINE`, `OPEN_REDIRECT`, `AVC_SPOOF`.
+- Extras: NTSync, BBRv3, WireGuard, TTL / IP set, Baseband Guard, MGLRU and scheduler tuning, Droidspaces container support.
+- Packaged with AnyKernel3.
 
-Built with a **Hybrid LKM (Loadable Kernel Module)** architecture, OP_KSUN_FS seamlessly combines non-intrusive modular root injection with deep kernel-level stealth root hiding (**SUSFS**), cutting-edge battery life tunables, and Windows game emulation synchronization primitives (**NTSync**).
+## Install
 
----
+Requirements: unlocked bootloader, and a copy of the stock `boot.img` and `init_boot.img` of the installed build (for rescue).
 
-## ⚡ What Makes OP_KSUN_FS Different?
+1. Check that the release matches your device and OxygenOS major version. Don't flash a zip after a major OTA (for example A15 to A16) until it's confirmed for the new version.
+2. Flash the zip with [Kernel Flasher](https://github.com/fatalcoder524/KernelFlasher), [Horizon Kernel Flasher](https://github.com/libxzr/HorizonKernelFlasher) or a custom recovery.
+3. Reboot, then install the [KernelSU Next manager](https://github.com/KernelSU-Next/KernelSU-Next/releases) and the [SUSFS module](https://github.com/sidex15/ksu_module_susfs/releases).
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        OP_KSUN_FS ARCHITECTURE                         │
-├────────────────────────────────┬───────────────────────────────────────┤
-│ 1. Core Kernel (Image)         │ Clean, hardened GKI with SUSFS hooks, │
-│                                │ BBRv3, NTSync, and Battery suite.     │
-├────────────────────────────────┼───────────────────────────────────────┤
-│ 2. Hybrid LKM (kernelsu.ko)    │ Root logic compiled as standalone     │
-│                                │ module, completely out-of-tree.       │
-├────────────────────────────────┼───────────────────────────────────────┤
-│ 3. SUSFS Guard Module          │ Runtime root mount and trace shield   │
-│                                │ protection (susfs_guard_lkm.ko).      │
-├────────────────────────────────┼───────────────────────────────────────┤
-│ 4. SakFi AnyKernel3.1          │ Recovery installer with built-in      │
-│                                │ 'ksud boot-patch' ramdisk injection.  │
-└────────────────────────────────┴───────────────────────────────────────┘
-```
+Rescue: flash the stock `boot.img` and `init_boot.img` from fastboot.
 
-1. **🚀 Modular Hybrid LKM Architecture**:
-   - Rather than forcing in-tree modifications that can destabilize vendor drivers, KernelSU-Next is compiled as a dedicated kernel module (`kernelsu.ko`).
-   - The installer automatically patches the device ramdisk (`init_boot` or `boot`) on-the-fly during flash via an integrated `ksud boot-patch` routine.
-   - Dual-mode support: Choose between **Modular LKM** (`ksu_mode: lkm`, default) or traditional **In-Tree Builtin** (`ksu_mode: builtin`).
+Play Integrity, attestation and the full ColorOS to OxygenOS to LineageOS path are covered in [oneplus-coloros-oos-lineageos](https://github.com/fishing-agents/oneplus-coloros-oos-lineageos).
 
-2. **🛡️ Advanced Stealth with SUSFS v2.2.0+**:
-   - Fully patched with Simonpunk's SUSFS for deep hide capabilities: `SUS_PATH`, `SUS_MOUNT`, `SUS_KSTAT`, `SUS_MAP`, `SPOOF_UNAME`, `SPOOF_CMDLINE`, `OPEN_REDIRECT`, and `AVC_SPOOF`.
-   - Bundled with a specialized **SUSFS Guard** module to prevent detection across banking apps, enterprise apps, and Google Play Protect.
-   - Multi-tier resilient GitLab API fetching ensures CI builds never fail due to network blips.
+## Building
 
-3. **🎨 Customized AnyKernel3.1 Packaging**:
-   - Powered by our dedicated fork: [**sakfi/AnyKernel3.1**](https://github.com/sakfi/AnyKernel3.1).
-   - Custom SakFi ASCII banner displayed natively in recovery consoles (TWRP, OrangeFox) and kernel flashing tools.
-   - Real-time cinematic flash logging with module verification indicators and upstream credits.
+Run the `build-kernel-release.yml` workflow from the Actions tab and pick the device config. Builds run only on GitHub Actions.
 
-4. **🔋 Battery Optimization & Performance Suite**:
-   - **Wakelock Caps**: 10-second hard safety timeout for noisy background driver wakelocks (`wlan`, `IPA`).
-   - **Schedutil & EAS Tuning**: Little-core scheduling preference (80% utilization bias) for cool, efficient daily use.
-   - **MGLRU & Memory Reclamation**: Multi-Gen LRU enablement and kswapd dampening to eliminate micro-stutters.
-   - **Compile-Level Log Silencing**: Eliminates debug spam, reducing CPU and flash I/O churn.
+## Disclaimer
 
-5. **🎮 Gaming & Networking Enhancements**:
-   - **NTSync**: Backported universal NT synchronization driver for zero-overhead Windows gaming emulation via Winlator, Mobox, and Box64.
-   - **BBRv3**: Google's BBRv3 TCP congestion control for minimum latency and maximum networking throughput.
-   - **WireGuard**: Fast, modern, kernel-space VPN for private and efficient mobile connectivity.
+Flashing a kernel that doesn't match the installed firmware can bootloop the phone or lose data. You flash at your own risk.
 
----
+## Credits
 
-<div align="center">
-  <img src=".github/workflows/split.gif" alt="Divider" width="100%" height="4px" />
-</div>
-
-## ✨ Key Features Matrix
-
-| Category | Feature | Status | Description |
-|:---|:---|:---:|:---|
-| **Root Solution** | **KernelSU-Next (KSUN)** | ✅ Active | Next-generation kernel-level root with manual hook support |
-| **Root Solution** | **Hybrid LKM Mode** | ✅ Active | Out-of-tree modular loading with automated ramdisk injection |
-| **Stealth** | **SUSFS v2.2.0+** | ✅ Active | Magic Mount hiding, open redirection, and inode/kstat spoofing |
-| **Stealth** | **SUSFS Guard LKM** | ✅ Active | Staged mount shield preventing root footprint leaks |
-| **Installer** | **SakFi AnyKernel3.1** | ✅ Active | Custom recovery installer with ASCII branding & boot patcher |
-| **Emulation** | **NTSync** | ✅ Active | High-performance fast sync primitives for Windows game emulators |
-| **Networking** | **BBRv3** | ✅ Active | Latest TCP congestion control for low-latency network traffic |
-| **Networking** | **WireGuard** | ✅ Active | In-kernel encrypted VPN subsystem |
-| **Networking** | **TTL / IP Set** | ✅ Active | Packet mangling and advanced firewall capabilities |
-| **Power** | **Battery Optimization** | ✅ Active | Schedutil tuning, wakelock hard-caps, and MGLRU dynamic memory |
-| **Hardening** | **BBG Security** | ✅ Active | LSM-based Baseband Guard security whitelist |
-| **Hardening** | **Unicode Bypass Fix** | ✅ Active | Prevents path traversal via non-printable Unicode codepoints |
-| **Containers** | **Droidspaces** | ✅ Active | Kernel support for portable Linux containers and chroots |
-
-<br>
-
-<details>
-<summary><b>🔍 Expand SUSFS Stealth Capabilities</b></summary>
-
-- `SUS_PATH` - Hide files, directories, and sensitive system artifacts
-- `SUS_MOUNT` - Mask overlayfs, tempfs, and root injection mounts
-- `SUS_KSTAT` - Spoof file attributes, modification timestamps, and stat info
-- `SUS_MAP` - Hide loaded library maps and executable memory regions
-- `SPOOF_UNAME` - Custom branded uname identification (`SakFi-OP`)
-- `SPOOF_CMDLINE` - Conceal boot parameters and root indicators
-- `OPEN_REDIRECT` - Intercept and redirect file descriptor access
-- `AVC_SPOOF` - Suppress SELinux audit vector logs
-</details>
-
----
-
-<div align="center">
-  <img src=".github/workflows/split.gif" alt="Divider" width="100%" height="4px" />
-</div>
-
-## 📱 Supported Devices & OxygenOS Versions
-
-Configurations are maintained under [`configs/`](./configs/). Build manifests support all modern OnePlus devices:
-
-| OxygenOS Version | Linux Kernel | Supported Platforms / Devices |
-|:---:|:---:|:---|
-| **OOS 14** | `5.10` / `5.15` / `6.1` | OnePlus 10 Pro, 10T, 11, 11R, 12, 12R, Pad, Ace Series |
-| **OOS 15** | `5.15` / `6.1` / `6.6` | OnePlus 12, 12R, 13, 13S, Open, Ace 3/5 Series, Nord 4/5 |
-| **OOS 16** | `6.1` / `6.6` / `6.12` | OnePlus 13, 13S, Turbo 6 Series, Ace 6 Series, Pad 2/3/4 Pro |
-
----
-
-<div align="center">
-  <img src=".github/workflows/split.gif" alt="Divider" width="100%" height="4px" />
-</div>
-
-## 📥 Installation Instructions
-
-### 🛠️ Prerequisites
-- Unlocked bootloader on your OnePlus device.
-- Recommended flashing utility: [**Kernel Flasher**](https://github.com/fatalcoder524/KernelFlasher) or [**Horizon Kernel Flasher**](https://github.com/libxzr/HorizonKernelFlasher).
-- A backup of your stock `boot.img` and `init_boot.img` stored in external storage.
-
----
-
-### 📲 Flashing Procedure
-
-1. **Download the Flashable ZIP**:
-   Grab the appropriate zip for your device model and OS version from [**GitHub Releases**](https://github.com/sakfi/OP_KSUN_FS/releases).
-   ```
-   Package Naming Convention:
-   SKF_{MODEL}_{OS_VER}_{KERNEL_VER}_{KSU_TYPE}_{KSU_VER}_SuSFS_LKM.zip
-   ```
-
-2. **Flash via Kernel Flasher or Custom Recovery**:
-   - Open **Kernel Flasher** or boot into **TWRP / OrangeFox**.
-   - Select the downloaded `SKF_*.zip` file and begin flashing.
-   - **Automatic Ramdisk Patching**: The installer automatically unpacks the target image, patches `kernelsu.ko` via `ksud`, stages `susfs_guard_lkm.ko`, and flashes the patched partition.
-
-3. **Reboot**:
-   - Reboot your system normally.
-
-4. **Install Management Apps**:
-   - Install the **KernelSU-Next Manager** APK from [KernelSU-Next Releases](https://github.com/KernelSU-Next/KernelSU-Next/releases).
-   - In the Manager, install the **SUSFS Module** from [sidex15/ksu_module_susfs Releases](https://github.com/sidex15/ksu_module_susfs/releases).
-   - Enjoy root privileges with stealth protections!
-
----
-
-<div align="center">
-  <img src=".github/workflows/split.gif" alt="Divider" width="100%" height="4px" />
-</div>
-
-## ⚠️ Disclaimer
-
-```
-Your warranty is now void. You are proceeding entirely at your own risk.
-```
-- Modifying your Android kernel can cause bootloops, device bricks, or loss of data if flashed onto incompatible firmware.
-- Always ensure that your active OxygenOS version matches the release package you download.
-- The authors and maintainers of this repository take **no responsibility** for damaged hardware, bootloops, or lost data.
-
----
-
-<div align="center">
-  <img src=".github/workflows/split.gif" alt="Divider" width="100%" height="4px" />
-</div>
-
-## 🌟 Special Thanks & Credits
-
-Heartfelt gratitude to the outstanding developers and projects whose open-source work made this kernel possible:
-
-<div align="center">
-
-| Project / Component | Author / Maintainer | Upstream Link |
-|:---|:---|:---:|
-| **AnyKernel3 & Recovery Tools** | **osm0sis** | [![XDA](https://img.shields.io/badge/XDA-osm0sis-orange?style=flat-square)](https://xdaforums.com/m/osm0sis.4544860/) |
-| **Original OnePlus Pipeline** | **fatalcoder524** | [![GitHub](https://img.shields.io/badge/GitHub-fatalcoder524-blue?style=flat-square&logo=github)](https://github.com/fatalcoder524) |
-| **KernelSU-Next** | **rifsxd** | [![GitHub](https://img.shields.io/badge/GitHub-rifsxd-blue?style=flat-square&logo=github)](https://github.com/KernelSU-Next/KernelSU-Next) |
-| **SUSFS (Root Hiding)** | **simonpunk** | [![GitLab](https://img.shields.io/badge/GitLab-simonpunk-orange?style=flat-square&logo=gitlab)](https://gitlab.com/simonpunk/susfs4ksu) |
-| **SUSFS KSU Module** | **sidex15** | [![GitHub](https://img.shields.io/badge/GitHub-sidex15-blue?style=flat-square&logo=github)](https://github.com/sidex15) |
-| **Droidspaces** | **ravindu644** | [![GitHub](https://img.shields.io/badge/GitHub-ravindu644-blue?style=flat-square&logo=github)](https://github.com/ravindu644/Droidspaces-OSS) |
-
-</div>
-
----
-
-<div align="center">
-  <img src=".github/workflows/split.gif" alt="Divider" width="100%" height="4px" />
-</div>
-
-## 💬 Community & Support
-
-Have questions, suggestions, or encountered a bug?
-- 🐛 **Issue Tracker**: Open an issue on [GitHub Issues](https://github.com/sakfi/OP_KSUN_FS/issues)
-- 💬 **Telegram Channel**: Join the discussion on [t.me/SakFi](https://t.me/SakFi)
-
-<div align="center">
-
-[![Telegram](https://img.shields.io/badge/Telegram-SakFi-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/SakFi)
-[![GitHub](https://img.shields.io/badge/GitHub-SakFi-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sakfi)
-
-<br>
-
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=sakfi&label=Profile%20Views&color=00FF99&style=for-the-badge" alt="sakfi profile views" />
-</p>
-
-</div>
+- [sakfi/OP_KSUN_FS](https://github.com/sakfi/OP_KSUN_FS): the build suite this fork is based on
+- [fatalcoder524](https://github.com/fatalcoder524) and [WildKernels](https://github.com/WildKernels/OnePlus_KernelSU_SUSFS): original OnePlus pipeline
+- [KernelSU Next](https://github.com/KernelSU-Next/KernelSU-Next) (rifsxd)
+- [SUSFS](https://gitlab.com/simonpunk/susfs4ksu) (simonpunk), [SUSFS module](https://github.com/sidex15/ksu_module_susfs) (sidex15)
+- [AnyKernel3](https://github.com/osm0sis/AnyKernel3) (osm0sis)
+- [Droidspaces](https://github.com/ravindu644/Droidspaces-OSS) (ravindu644)
